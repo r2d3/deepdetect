@@ -110,6 +110,9 @@ endif()
 
 # dependency on Boost
 find_package(Boost 1.54 REQUIRED COMPONENTS filesystem thread system iostreams)
+include_directories( ${Boost_INCLUDE_DIR} )
+
+find_package( spdlog REQUIRED )
 
 # annoy
 if (USE_CAFFE)

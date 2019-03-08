@@ -94,6 +94,14 @@ find_package(Boost 1.54 REQUIRED COMPONENTS filesystem thread system iostreams)
 include_directories( ${Boost_INCLUDE_DIR} )
 
 find_package( spdlog REQUIRED )
+find_package( gflags REQUIRED COMPONENTS static)
+message(STATUS "gflags ${gflags_VERSION_STRING} found (${gflags_LIBRARIES})")
+include_directories(${gflags_INCLUDE_DIR})
+
+find_path( utfcpp_INCLUDE_DIR  utf8.h
+    /usr/include /usr/local/include c:/local/utf8/source)
+message(STATUS "utf8.h found (${utfcpp_INCLUDE_DIR})")
+include_directories(${utfcpp_INCLUDE_DIR})
 
 # annoy
 if (USE_SIMSEARCH)

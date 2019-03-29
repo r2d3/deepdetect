@@ -7,6 +7,8 @@ option(USE_NCNN "use NCNN backend")
 option(USE_HDF5 "use HDF5" ON)
 option(USE_CAFFE "use Caffe backend" ON)
 
+set (CMAKE_CXX_STANDARD 11)
+
 if (USE_CAFFE)
   add_definitions(-DUSE_CAFFE)
 endif()
@@ -49,8 +51,6 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -fopenmp -O2 -fPIC -std=c++11  -DUSE_OPENCV -DUSE_LMDB")
-
 if (USE_COMMAND_LINE)
   if (NOT USE_CAFFE)
     set(USE_JSON_API ON)
@@ -66,6 +66,9 @@ endif()
 if (USE_JSON_API)
   string(APPEND CMAKE_CXX_FLAGS " -DUSE_JSON_API")
 endif()
+
+#set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -fopenmp -O2 -fPIC -std=c++11 -DUSE_OPENCV -DUSE_LMDB")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_OPENCV -DUSE_LMDB")
 
 # configure a header file to pass some of the CMake settings
 # to the source code
@@ -88,9 +91,10 @@ elseif (USE_CAFFE2)
   set(DETECTRON_PATH ${CMAKE_BINARY_DIR}/detectron/src/detectron)
   set(EIGEN3_INCLUDE_DIR ${PYTORCH_PATH}/third_party/eigen)
 else()
-   find_package(PkgConfig)
-   pkg_search_module(Eigen3 REQUIRED eigen3)
-   set(EIGEN3_INCLUDE_DIR "/usr/include/eigen3")
+    find_package(Eigen3)
+#   find_package(PkgConfig)
+#   pkg_search_module(Eigen3 REQUIRED eigen3)
+#   set(EIGEN3_INCLUDE_DIR "/usr/include/eigen3")
 endif()
 
 set(eigen_archive_hash "50812b426b7c")
@@ -252,9 +256,6 @@ if (USE_CAFFE2)
     ${CAFFE2_PATCHES}/detectron/0002-compiled.patch
     ${CAFFE2_PATCHES}/detectron/0003-ops.patch
     ${CAFFE2_PATCHES}/detectron/0004-import.patch
-    ${CAFFE2_PATCHES}/detectron/0005-visual_genome.patch
-    ${CAFFE2_PATCHES}/detectron/0006-pkl_cache.patch
-    ${CAFFE2_PATCHES}/detectron/0007-weight_transfer.patch
     )
 
   list(APPEND CAFFE2_OPS
@@ -546,26 +547,45 @@ if (USE_NCNN)
       ncnn
       PREFIX ncnn
       INSTALL_DIR ${CMAKE_BINARY_DIR}
-      DOWNLOAD_COMMAND git clone --recursive https://github.com/jolibrain/ncnn.git
-      CONFIGURE_COMMAND mkdir -p build && cd build && cmake .. -DPI3=ON -DCMAKE_TOOLCHAIN_FILE=../toolchains/pi3.toolchain.cmake
+      DOWNLOAD_COMMAND git clone --recursive https://github.com/Tencent/ncnn.git
+      PATCH_COMMAND git reset --hard ${NCNN_COMMIT_HASH}
+      CONFIGURE_COMMAND mkdir -p build && cd build && cmake .. -DPI3=ON -DCMAKE_TOOLCHAIN_FILE=../pi3.toolchain.cmake
       BUILD_COMMAND cd build/ && make -j${N}
       INSTALL_COMMAND ""
       BUILD_IN_SOURCE 1
     )
-  else ()
+  elseif (NOT WIN32)
     ExternalProject_Add(
       ncnn
       PREFIX ncnn
       INSTALL_DIR ${CMAKE_BINARY_DIR}
-      DOWNLOAD_COMMAND git clone --recursive https://github.com/jolibrain/ncnn.git
+      #DOWNLOAD_COMMAND git clone --recursive https://github.com/Tencent/ncnn.git
+      #PATCH_COMMAND git reset --hard ${NCNN_COMMIT_HASH}
+	  GIT_REPOSITORY https://github.com/Tencent/ncnn.git
+	  GIT_TAG ${NCNN_COMMIT_HASH}
       CONFIGURE_COMMAND mkdir -p build && cd build && cmake ..
       BUILD_COMMAND cd build/ && make -j${N}
       INSTALL_COMMAND ""
       BUILD_IN_SOURCE 1
     )
   endif()
-  set(NCNN_INC_DIR ${CMAKE_BINARY_DIR}/ncnn/src/ncnn/src ${CMAKE_BINARY_DIR}/ncnn/src/ncnn/build/src)
-  set(NCNN_LIB_DIR ${CMAKE_BINARY_DIR}/ncnn/src/ncnn/build/src)
+
+  if (WIN32)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      # 64 bits
+      set(NCNN_INC_DIR c:/local/ncnn/x64/include)
+      set(NCNN_LIB_DIR c:/local/ncnn/x64/lib)
+      set(NCNN_LIB_DEPS optimized c:/local/ncnn/x64/lib/ncnn.lib debug c:/local/ncnn/x64/lib/ncnnd.lib)
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+      # 32 bits
+      set(NCNN_INC_DIR c:/local/ncnn/x86/include)
+      set(NCNN_LIB_DIR c:/local/ncnn/x86/lib)
+      set(NCNN_LIB_DEPS optimized c:/local/ncnn/x86/lib/ncnn.lib debug c:/local/ncnn/x86/lib/ncnnd.lib)
+    endif()
+  else()
+    set(NCNN_INC_DIR ${CMAKE_BINARY_DIR}/ncnn/src/ncnn/src ${CMAKE_BINARY_DIR}/ncnn/src/ncnn/build/src)
+    set(NCNN_LIB_DIR ${CMAKE_BINARY_DIR}/ncnn/src/ncnn/build/src)
+  endif()
 endif()
 
 # XGBoost
@@ -647,7 +667,14 @@ set(COMMON_LINK_DIRS
   ${DLIB_LIB_DIR})
 if (USE_HDF5)
   set(COMMON_LINK_LIBS
-    ddetect ${CUDA_LIB_DEPS} glog gflags ${OpenCV_LIBS} curlpp curl hdf5_cpp ${Boost_LIBRARIES} archive
+    ddetect ${CUDA_LIB_DEPS}
+	glog
+	gflags
+	${OpenCV_LIBS}
+	curlpp curl
+	hdf5_cpp
+	${Boost_LIBRARIES}
+	archive
     ${CAFFE_LIB_DEPS}
     ${CAFFE2_LIB_DEPS}
     ${TF_LIB_DEPS}
@@ -657,7 +684,14 @@ if (USE_HDF5)
     ${DLIB_LIB_DEPS})
 else()
   set(COMMON_LINK_LIBS
-    ddetect ${CUDA_LIB_DEPS} glog gflags ${OpenCV_LIBS} curlpp curl ${Boost_LIBRARIES} archive
+    ddetect
+	${CUDA_LIB_DEPS}
+	#glog
+	gflags
+	${OpenCV_LIBS}
+	#curlpp curl
+	${Boost_LIBRARIES}
+	#archive
     ${CAFFE_LIB_DEPS}
     ${CAFFE2_LIB_DEPS}
     ${TF_LIB_DEPS}

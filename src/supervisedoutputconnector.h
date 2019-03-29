@@ -1591,9 +1591,10 @@ namespace dd
     
     // measure: gini coefficient
     static double comp_gini(const std::vector<double> &a, const std::vector<double> &p) {
-      struct K {double a, p;} k[a.size()];
+      struct K { double a, p; };
+      std::vector<K> k(a.size());
       for (size_t i = 0; i != a.size(); ++i) k[i] = {a[i], p[i]};
-      std::stable_sort(k, k+a.size(), [](const K &a, const K &b) {return a.p > b.p;});
+      std::stable_sort(k.begin(), k.end(), [](const K &a, const K &b) {return a.p > b.p;});
       double accPopPercSum=0, accLossPercSum=0, giniSum=0, sum=0;
       for (auto &i: a) sum += i;
       for (auto &i: k) 

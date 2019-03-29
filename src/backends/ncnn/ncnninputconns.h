@@ -75,6 +75,8 @@ namespace dd
             cv::Mat bgr = this->_images.at(0);
 
             _in = ncnn::Mat::from_pixels(bgr.data, ncnn::Mat::PIXEL_BGR, bgr.cols, bgr.rows);
+            if (_mean.empty())
+                _mean.resize(3); // FIX: _mean is not initialized ?!
             _in.substract_mean_normalize(&_mean[0], 0);
 	    _ids.push_back(this->_uris.at(0));
         }

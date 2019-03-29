@@ -22,7 +22,7 @@
 #include "deepdetect.h"
 #include "commandlineapi.h"
 #include "commandlinejsonapi.h"
-#include "httpjsonapi.h"
+//#include "httpjsonapi.h"
 #include "imginputfileconn.h"
 #include "outputconnectorstrategy.h"
 #ifdef USE_XGBOOST
@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
   
   if (FLAGS_jsonapi == 0)
     {
-      DeepDetect<HttpJsonAPI> dd;
-      dd.boot(argc,argv);
+//      DeepDetect<HttpJsonAPI> dd;
+//      dd.boot(argc,argv);
     }
 #ifdef USE_CAFFE
   else if (FLAGS_jsonapi == 2)

@@ -9,31 +9,33 @@ endif()
 
 set(ddetect_SOURCES
     deepdetect.h
-	deepdetect.cc
-	mllibstrategy.h
-	mlmodel.h
-	mlservice.h
-	inputconnectorstrategy.h
-	imginputfileconn.h
+    deepdetect.cc
+    mllibstrategy.h
+    mlmodel.h
+    mlservice.h
+    inputconnectorstrategy.h
+    imginputfileconn.h
     csvinputfileconn.h
-	csvinputfileconn.cc
-	svminputfileconn.h
-	svminputfileconn.cc
-	txtinputfileconn.h
-	txtinputfileconn.cc
-	apidata.h
+    csvinputfileconn.cc
+    csvtsinputfileconn.h
+    csvtsinputfileconn.cc
+    svminputfileconn.h
+    svminputfileconn.cc
+    txtinputfileconn.h
+    txtinputfileconn.cc
+    apidata.h
     apidata.cc
-	jsonapi.h
-	jsonapi.cc
-	#httpjsonapi.cc
-	#httpjsonapi.h
-	commandlinejsonapi.h
-	commandlinejsonapi.cc
-	#ext/rmustache/mustache.h
-	#ext/rmustache/mustache.cc
+    jsonapi.h
+    jsonapi.cc
+    #httpjsonapi.cc
+    #httpjsonapi.h
+    commandlinejsonapi.h
+    commandlinejsonapi.cc
+    #ext/rmustache/mustache.h
+    #ext/rmustache/mustache.cc
     )
 if (USE_CAFFE)
-  list(APPEND ddetect_SOURCES backends/caffe/caffelib.h backends/caffe/caffelib.cc backends/caffe/caffemodel.h backends/caffe/caffemodel.cc backends/caffe/caffeinputconns.h backends/caffe/caffeinputconns.cc generators/net_generator.h generators/net_caffe.h generators/net_caffe.cc generators/net_caffe_mlp.h generators/net_caffe_mlp.cc generators/net_caffe_convnet.h generators/net_caffe_convnet.cc generators/net_caffe_resnet.h generators/net_caffe_resnet.cc commandlineapi.h commandlineapi.cc)
+  list(APPEND ddetect_SOURCES backends/caffe/caffelib.h backends/caffe/caffelib.cc backends/caffe/caffemodel.h backends/caffe/caffemodel.cc backends/caffe/caffeinputconns.h backends/caffe/caffeinputconns.cc generators/net_generator.h generators/net_caffe.h generators/net_caffe.cc generators/net_caffe_mlp.h generators/net_caffe_mlp.cc generators/net_caffe_convnet.h generators/net_caffe_convnet.cc generators/net_caffe_resnet.h generators/net_caffe_resnet.cc generators/net_caffe_recurrent.cc commandlineapi.h commandlineapi.cc)
 endif()
 if (USE_TF)
   list(APPEND ddetect_SOURCES backends/tf/tflib.cc backends/tf/tflib.h backends/tf/tfmodel.cc backends/tf/tfmodel.h backends/tf/tfinputconns.h)
@@ -68,7 +70,10 @@ endif()
 if (USE_NCNN)
   list(APPEND ddetect_SOURCES
     backends/ncnn/ncnnlib.cc
+    backends/ncnn/ncnnlib.h
     backends/ncnn/ncnnmodel.cc
+    backends/ncnn/ncnnmodel.h
+	backends/ncnn/ncnninputconns.h
   )
 endif()
 add_library(ddetect ${ddetect_SOURCES})

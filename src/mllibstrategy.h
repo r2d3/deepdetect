@@ -76,7 +76,7 @@ namespace dd
      * \brief copy-constructor
      */
     MLLib(MLLib &&mll) noexcept
-      :_inputc(mll._inputc),_outputc(mll._outputc),_mltype(mll._mltype),_mlmodel(mll._mlmodel),_meas(mll._meas),_tjob_running(mll._tjob_running.load()),_logger(mll._logger)
+      :_inputc(mll._inputc),_outputc(mll._outputc),_mltype(mll._mltype),_mlmodel(mll._mlmodel),_meas(mll._meas),_meas_per_iter(mll._meas_per_iter),_tjob_running(mll._tjob_running.load()),_logger(mll._logger)
       {}
     
     /**
@@ -347,7 +347,12 @@ namespace dd
 			     When not, prediction calls are rejected while training is running. */
 
     std::shared_ptr<spdlog::logger> _logger; /**< mllib logger. */
-    
+
+    long int _model_flops = 0;  /**< model flops. */
+    long int _model_params = 0;  /**< number of parameters in the model. */
+    long int _mem_used_train = 0; /**< amount  of memory used. */
+    long int _mem_used_test = 0; /**< amount  of memory used. */
+
   protected:
     mutable std::mutex _meas_per_iter_mutex; /**< mutex over measures history. */
     mutable std::mutex _meas_mutex; /** mutex around current measures. */

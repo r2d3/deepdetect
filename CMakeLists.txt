@@ -528,9 +528,8 @@ if (USE_NCNN)
       ncnn
       PREFIX ncnn
       INSTALL_DIR ${CMAKE_BINARY_DIR}
-      DOWNLOAD_COMMAND git clone --recursive https://github.com/Tencent/ncnn.git
-      PATCH_COMMAND git reset --hard ${NCNN_COMMIT_HASH}
-      CONFIGURE_COMMAND mkdir -p build && cd build && cmake .. -DPI3=ON -DCMAKE_TOOLCHAIN_FILE=../pi3.toolchain.cmake
+      DOWNLOAD_COMMAND git clone --recursive https://github.com/jolibrain/ncnn.git
+      CONFIGURE_COMMAND mkdir -p build && cd build && cmake .. -DPI3=ON -DCMAKE_TOOLCHAIN_FILE=../toolchains/pi3.toolchain.cmake
       BUILD_COMMAND cd build/ && make -j${N}
       INSTALL_COMMAND ""
       BUILD_IN_SOURCE 1
@@ -540,10 +539,7 @@ if (USE_NCNN)
       ncnn
       PREFIX ncnn
       INSTALL_DIR ${CMAKE_BINARY_DIR}
-      #DOWNLOAD_COMMAND git clone --recursive https://github.com/Tencent/ncnn.git
-      #PATCH_COMMAND git reset --hard ${NCNN_COMMIT_HASH}
-	  GIT_REPOSITORY https://github.com/Tencent/ncnn.git
-	  GIT_TAG ${NCNN_COMMIT_HASH}
+      DOWNLOAD_COMMAND git clone --recursive https://github.com/jolibrain/ncnn.git
       CONFIGURE_COMMAND mkdir -p build && cd build && cmake ..
       BUILD_COMMAND cd build/ && make -j${N}
       INSTALL_COMMAND ""

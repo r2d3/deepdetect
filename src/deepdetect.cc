@@ -47,4 +47,5 @@ namespace dd
 #endif
   template class DeepDetect<CommandLineJsonAPI>;
   //template class DeepDetect<HttpJsonAPI>;
+  template class DeepDetect<JsonAPI>;
 }

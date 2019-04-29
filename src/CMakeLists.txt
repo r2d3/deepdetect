@@ -25,17 +25,23 @@ set(ddetect_SOURCES
     txtinputfileconn.cc
     apidata.h
     apidata.cc
-    jsonapi.h
-    jsonapi.cc
-    #httpjsonapi.cc
-    #httpjsonapi.h
-    commandlinejsonapi.h
-    commandlinejsonapi.cc
-    #ext/rmustache/mustache.h
-    #ext/rmustache/mustache.cc
+    ext/rmustache/mustache.h
+    ext/rmustache/mustache.cc
     )
+if (USE_JSON_API)
+  list(APPEND ddetect_SOURCES jsonapi.h jsonapi.cc)
+endif()
+if (USE_HTTP_SERVER)
+  list(APPEND ddetect_SOURCES httpjsonapi.cc httpjsonapi.h)
+endif()
+if (USE_COMMAND_LINE AND USE_JSON_API)
+  list(APPEND ddetect_SOURCES commandlinejsonapi.h commandlinejsonapi.cc)
+endif()
 if (USE_CAFFE)
-  list(APPEND ddetect_SOURCES backends/caffe/caffelib.h backends/caffe/caffelib.cc backends/caffe/caffemodel.h backends/caffe/caffemodel.cc backends/caffe/caffeinputconns.h backends/caffe/caffeinputconns.cc generators/net_generator.h generators/net_caffe.h generators/net_caffe.cc generators/net_caffe_mlp.h generators/net_caffe_mlp.cc generators/net_caffe_convnet.h generators/net_caffe_convnet.cc generators/net_caffe_resnet.h generators/net_caffe_resnet.cc generators/net_caffe_recurrent.cc commandlineapi.h commandlineapi.cc)
+  list(APPEND ddetect_SOURCES backends/caffe/caffelib.h backends/caffe/caffelib.cc backends/caffe/caffemodel.h backends/caffe/caffemodel.cc backends/caffe/caffeinputconns.h backends/caffe/caffeinputconns.cc generators/net_generator.h generators/net_caffe.h generators/net_caffe.cc generators/net_caffe_mlp.h generators/net_caffe_mlp.cc generators/net_caffe_convnet.h generators/net_caffe_convnet.cc generators/net_caffe_resnet.h generators/net_caffe_resnet.cc generators/net_caffe_recurrent.cc )
+  if (USE_COMMAND_LINE)
+    list(APPEND ddetect_SOURCES commandlineapi.h commandlineapi.cc)
+  endif()
 endif()
 if (USE_TF)
   list(APPEND ddetect_SOURCES backends/tf/tflib.cc backends/tf/tflib.h backends/tf/tfmodel.cc backends/tf/tfmodel.h backends/tf/tfinputconns.h)

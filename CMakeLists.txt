@@ -31,6 +31,9 @@ set (deepdetect_VERSION_MINOR 1)
 # options
 OPTION(BUILD_TESTS "Should the tests be built")
 OPTION(BUILD_TOOLS "Should the tools be built")
+OPTION(USE_COMMAND_LINE "build command line JSON API" ON)
+OPTION(USE_JSON_API "build internal JSON API" ON)
+OPTION(USE_HTTP_SERVER "build http JSON API " ON)
  
 # Get the current working branch
 execute_process(
@@ -49,7 +52,23 @@ execute_process(
 )
 
 #set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -fopenmp -O2 -fPIC -std=c++11 -DUSE_OPENCV -DUSE_LMDB")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_OPENCV -DUSE_LMDB")
+add_definitions("-DUSE_OPENCV -DUSE_LMDB")
+
+if (USE_COMMAND_LINE)
+  if (NOT USE_CAFFE)
+    set(USE_JSON_API ON)
+  endif()
+  add_definitions("-DUSE_COMMANDLINE")
+endif()
+
+if (USE_HTTP_SERVER)
+  set(USE_JSON_API ON)
+  add_definitions("-DUSE_HTTP")
+endif()
+
+if (USE_JSON_API)
+  add_definitions("-DUSE_JSON_API")
+endif()
 
 # configure a header file to pass some of the CMake settings
 # to the source code
@@ -580,7 +599,7 @@ if (USE_XGBOOST)
       PREFIX xgboost
       INSTALL_DIR ${CMAKE_BINARY_DIR}
       DOWNLOAD_COMMAND git clone --recursive https://github.com/dmlc/xgboost.git
-      CONFIGURE_COMMAND wget https://github.com/NVlabs/cub/archive/1.6.4.zip && unzip 1.6.4.zip && rm 1.6.4.zip && mkdir -p build && cd build &&
+      CONFIGURE_COMMAND git checkout 84d992babcc370bff6cf4fe89985f072b0b91a64 && wget https://github.com/NVlabs/cub/archive/1.6.4.zip && unzip 1.6.4.zip && rm 1.6.4.zip && mkdir -p build && cd build &&
       cmake .. -DPLUGIN_UPDATER_GPU=ON -DCUB_DIRECTORY=${CMAKE_BINARY_DIR}/xgboost/src/xgboost/cub-1.6.4/ -DCUDA_NVCC_FLAGS=-Xcompiler\ -fPIC\ --expt-extended-lambda\ -gencode\ arch=compute_30,code=compute_30\ -gencode\ arch=compute_35,code=compute_35\ -gencode\ arch=compute_50,code=compute_50\ -gencode\ arch=compute_52,code=compute_52\ -gencode\ arch=compute_61,code=compute_61 && make && make
       INSTALL_COMMAND ""
       BUILD_IN_SOURCE 1
@@ -591,7 +610,7 @@ if (USE_XGBOOST)
       PREFIX xgboost
       INSTALL_DIR ${CMAKE_BINARY_DIR}
       DOWNLOAD_COMMAND git clone --recursive https://github.com/dmlc/xgboost.git
-      CONFIGURE_COMMAND mkdir build && cd build && cmake .. && make -j ${N}
+      CONFIGURE_COMMAND git checkout 84d992babcc370bff6cf4fe89985f072b0b91a64 && mkdir build && cd build && cmake .. && make -j ${N}
       INSTALL_COMMAND ""
       BUILD_IN_SOURCE 1
       )

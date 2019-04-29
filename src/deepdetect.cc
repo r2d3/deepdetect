@@ -22,7 +22,9 @@
 #include "deepdetect.h"
 #include "commandlineapi.h"
 #include "commandlinejsonapi.h"
-//#include "httpjsonapi.h"
+#ifdef USE_HTTP
+#include "httpjsonapi.h"
+#endif
 #include "dd_config.h"
 #include "githash.h"
 

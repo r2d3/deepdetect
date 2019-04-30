@@ -7,7 +7,27 @@ if (USE_HDF5)
   add_definitions(-DUSE_HDF5)
 endif()
 
-set(ddetect_SOURCES deepdetect.h deepdetect.cc mllibstrategy.h mlmodel.h mlservice.h inputconnectorstrategy.h imginputfileconn.h csvinputfileconn.h csvinputfileconn.cc csvtsinputfileconn.h csvtsinputfileconn.cc svminputfileconn.h svminputfileconn.cc txtinputfileconn.h txtinputfileconn.cc apidata.h apidata.cc    ext/rmustache/mustache.h ext/rmustache/mustache.cc)
+set(ddetect_SOURCES
+    deepdetect.h
+    deepdetect.cc
+    mllibstrategy.h
+    mlmodel.h
+    mlservice.h
+    inputconnectorstrategy.h
+    imginputfileconn.h
+    csvinputfileconn.h
+    csvinputfileconn.cc
+    csvtsinputfileconn.h
+    csvtsinputfileconn.cc
+    svminputfileconn.h
+    svminputfileconn.cc
+    txtinputfileconn.h
+    txtinputfileconn.cc
+    apidata.h
+    apidata.cc
+    ext/rmustache/mustache.h
+    ext/rmustache/mustache.cc
+    )
 if (USE_JSON_API)
   list(APPEND ddetect_SOURCES jsonapi.h jsonapi.cc)
 endif()
@@ -56,7 +76,10 @@ endif()
 if (USE_NCNN)
   list(APPEND ddetect_SOURCES
     backends/ncnn/ncnnlib.cc
+    backends/ncnn/ncnnlib.h
     backends/ncnn/ncnnmodel.cc
+    backends/ncnn/ncnnmodel.h
+	backends/ncnn/ncnninputconns.h
   )
 endif()
 add_library(ddetect ${ddetect_SOURCES})

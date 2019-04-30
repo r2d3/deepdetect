@@ -34,6 +34,9 @@
 
 using namespace dd;
 
+#if WIN32
+DEFINE_int32(jsonapi, 0, "whether to use the JSON command line API");
+#else
 DEFINE_int32(jsonapi,0,"whether to use the JSON command line API ("
 #ifdef USE_HTTP
          "0: HTTP server JSON "
@@ -44,8 +47,8 @@ DEFINE_int32(jsonapi,0,"whether to use the JSON command line API ("
 #endif
          "2: commandline no JSON  "
 #endif
-
 );
+#endif
 
 int main(int argc, char *argv[])
 {

@@ -51,20 +51,23 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+#set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -fopenmp -O2 -fPIC -std=c++11 -DUSE_OPENCV -DUSE_LMDB")
+add_definitions("-DUSE_OPENCV -DUSE_LMDB")
+
 if (USE_COMMAND_LINE)
   if (NOT USE_CAFFE)
     set(USE_JSON_API ON)
   endif()
-  string(APPEND CMAKE_CXX_FLAGS " -DUSE_COMMANDLINE")
+  add_definitions("-DUSE_COMMANDLINE")
 endif()
 
 if (USE_HTTP_SERVER)
   set(USE_JSON_API ON)
-  string(APPEND CMAKE_CXX_FLAGS " -DUSE_HTTP")
+  add_definitions("-DUSE_HTTP")
 endif()
 
 if (USE_JSON_API)
-  string(APPEND CMAKE_CXX_FLAGS " -DUSE_JSON_API")
+  add_definitions("-DUSE_JSON_API")
 endif()
 
 #set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -fopenmp -O2 -fPIC -std=c++11 -DUSE_OPENCV -DUSE_LMDB")

@@ -34,7 +34,7 @@
 
 using namespace dd;
 
-#if WIN32
+#ifdef WIN32
 DEFINE_int32(jsonapi, 0, "whether to use the JSON command line API");
 #else
 DEFINE_int32(jsonapi,0,"whether to use the JSON command line API ("
